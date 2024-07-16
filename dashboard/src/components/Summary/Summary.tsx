@@ -1,14 +1,17 @@
 import { useMemo } from 'react';
 
-import BaseCard from '../Cards/BaseCard';
 import BaseTable from '../Table/BaseTable';
 import { TableBody, TableCell, TableRow } from '../ui/table';
 import ListingComponentItem, {
   IListingComponentItem,
 } from '../ListingComponentItem/ListingComponentItem';
 
-export interface ISummary {
+export interface ISummary extends ISummaryTable {
   title: string;
+  type: 'summary';
+}
+
+export interface ISummaryTable {
   summaryHeaders: string[];
   summaryBody: ISummaryItem[];
 }
@@ -19,10 +22,9 @@ export interface ISummaryItem {
 }
 
 const Summary = ({
-  title,
   summaryHeaders,
   summaryBody,
-}: ISummary): JSX.Element => {
+}: ISummaryTable): JSX.Element => {
   const summaryHeadersRow = useMemo(
     () => summaryHeaders.map(header => <span key={header}>{header}</span>),
     [summaryHeaders],
@@ -41,16 +43,10 @@ const Summary = ({
   );
 
   return (
-    <BaseCard
-      title={title}
-      className="w-fit bg-mediumGray"
-      content={
-        <BaseTable
-          className="!rounded-[0rem] bg-mediumGray"
-          headers={summaryHeadersRow}
-          body={<TableBody>{summaryBodyRows}</TableBody>}
-        />
-      }
+    <BaseTable
+      className="!rounded-[0rem] bg-mediumGray"
+      headers={summaryHeadersRow}
+      body={<TableBody>{summaryBodyRows}</TableBody>}
     />
   );
 };
@@ -72,6 +68,7 @@ const SummaryItem = ({ arch, compilers }: ISummaryItem): JSX.Element => {
           errors={arch.errors}
           warnings={arch.warnings}
           text={arch.text}
+          success={arch.success}
         />
       </TableCell>
       <TableCell>

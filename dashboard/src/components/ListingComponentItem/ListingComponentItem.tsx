@@ -5,6 +5,7 @@ import ColoredCircle from '../ColoredCircle/ColoredCircle';
 export interface IListingComponentItem {
   warnings?: number;
   errors?: number;
+  success?: number;
   text?: string;
   hasBottomBorder?: boolean;
 }
@@ -19,6 +20,7 @@ const ListingComponentItem = ({
   warnings,
   errors,
   text,
+  success,
   hasBottomBorder,
 }: IListingComponentItem): JSX.Element => {
   const hasBorder = hasBottomBorder ? 'border-b' : '';
@@ -36,10 +38,18 @@ const ListingComponentItem = ({
       <></>
     );
 
+  const itemSuccess =
+    success && success > 0 ? (
+      <ColoredCircle quantity={success} type={ComponentType.Success} />
+    ) : (
+      <></>
+    );
+
   return (
     <div className={classNames('flex flex-row gap-2 pb-1', hasBorder)}>
       {itemError}
       {itemWarning}
+      {itemSuccess}
       <span className="text-black text-sm">{text}</span>
     </div>
   );
