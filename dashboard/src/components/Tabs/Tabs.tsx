@@ -1,5 +1,7 @@
 import { ReactElement, useMemo } from 'react';
 
+import classNames from 'classnames';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export interface ITabItem {
@@ -17,7 +19,14 @@ const TabsComponent = ({ defaultTab, tabs }: ITabsComponent): JSX.Element => {
   const tabsTrigger = useMemo(
     () =>
       tabs.map(tab => (
-        <TabsTrigger disabled={tab.disabled} key={tab.name} value={tab.name}>
+        <TabsTrigger
+          className={classNames('text-lg px-4 bg-transparent', {
+            'border-b-2 border-lightBlue': !tab.disabled,
+          })}
+          disabled={tab.disabled}
+          key={tab.name}
+          value={tab.name}
+        >
           {tab.name}
         </TabsTrigger>
       )),
@@ -36,7 +45,7 @@ const TabsComponent = ({ defaultTab, tabs }: ITabsComponent): JSX.Element => {
 
   return (
     <Tabs defaultValue={defaultTab.name} className="w-full">
-      <TabsList>{tabsTrigger}</TabsList>
+      <TabsList className="w-full justify-start">{tabsTrigger}</TabsList>
       {tabsContent}
     </Tabs>
   );
