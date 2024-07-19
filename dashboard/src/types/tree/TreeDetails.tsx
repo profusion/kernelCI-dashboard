@@ -1,4 +1,4 @@
-type TreeDetailsBuild = {
+export type TreeDetailsBuild = {
   id: string;
   architecture: string;
   config_name: string;
@@ -69,8 +69,8 @@ export interface TTreeDetailsFilter
   extends Partial<{
     [K in keyof Omit<
       TreeDetailsBuild,
-      'test_status' | 'misc' | 'valid'
-    >]: TreeDetailsBuild[K][];
+      'test_status' | 'misc' | 'status'
+    >]: boolean;
   }> {
-  valid?: string[];
+  status?: string;
 }

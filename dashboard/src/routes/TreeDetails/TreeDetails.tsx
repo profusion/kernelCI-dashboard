@@ -1,19 +1,19 @@
 import { useParams } from 'react-router-dom';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 import { useTreeDetails } from '@/api/TreeDetails';
 import TreeDetailsTab from '@/components/Tabs/TreeDetailsTab';
 import { IListingItem } from '@/components/ListingItem/ListingItem';
 import { ISummaryItem } from '@/components/Summary/Summary';
-import {
-  AccordionItemBuilds,
-  Results,
-  TTreeDetailsFilter,
-  TreeDetails as TreeDetailsType,
-} from '@/types/tree/TreeDetails';
+import { AccordionItemBuilds, Results } from '@/types/tree/TreeDetails';
 
-import TreeDetailsFilter from './TreeDetailsFilter';
+import FilterList from '@/components/FilterList/FilterList';
+
+import TreeDetailsFilter, {
+  createFilters,
+  TFilterObj,
+} from './TreeDetailsFilter';
 
 export interface ITreeDetails {
   archs: ISummaryItem[];
@@ -24,16 +24,18 @@ export interface ITreeDetails {
 
 const TreeDetails = (): JSX.Element => {
   const { treeId } = useParams();
-  const [filter, setFilter] = useState<
-    TTreeDetailsFilter | Record<string, never>
-  >({});
-  const { data } = useTreeDetails(treeId ?? '', filter);
+  const [filter, setFilter] = useState<TFilterObj | Record<string, never>>({});
+  const { data } = useTreeDetails(treeId ?? '');
 
   const [treeDetailsData, setTreeDetailsData] = useState<ITreeDetails>();
-  const initialDataRef = useRef<TreeDetailsType | undefined>();
-  if (!initialDataRef.current) {
-    initialDataRef.current = data;
+  const isInitialDataRef = useRef(false);
+
+  if (!isInitialDataRef.current && data) {
+    isInitialDataRef.current = true;
+    setFilter(createFilters(data));
   }
+
+  const onClickFilterCleanAll = useCallback(() => setFilter({}), []);
 
   useEffect(() => {
     if (data) {
@@ -90,15 +92,22 @@ const TreeDetails = (): JSX.Element => {
     }
   }, [data]);
 
+  // const filterValues = Object.values(filter).flat();
+  const filterValues = ['ola', 'alo'];
+
   return (
     <div className="flex flex-col pt-8">
       <div className="flex flex-col pb-2">
         <div className="flex justify-end">
-          <TreeDetailsFilter
-            data={initialDataRef.current}
-            onFilter={setFilter}
-          />
+          <TreeDetailsFilter filter={filter} onFilter={setFilter} />
         </div>
+
+        <FilterList
+          itens={filterValues}
+          onClickCleanAll={onClickFilterCleanAll}
+          onClickItem={console.log}
+          removeOnEmpty
+        />
         <TreeDetailsTab treeDetailsData={treeDetailsData} />
       </div>
     </div>
